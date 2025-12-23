@@ -263,7 +263,7 @@ function renderLevelCards() {
       </div>
       <button class="btn">Start</button>
     `;
-    card.querySelector("button").addEventListener("click", () => startLevel(L.id));
+    card.querySelector("button").onclick = () => startLevel(L.id);
     levelGrid.appendChild(card);
   }
 }
