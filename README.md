@@ -1,2 +1,2 @@
-# sara-xmas-puzzle
-Alles Gute zu Weihnachten Süße
+# ss-xmas-puzzle
+Alles Gute
