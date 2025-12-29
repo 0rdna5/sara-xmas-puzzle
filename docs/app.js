@@ -1,6 +1,26 @@
 
 let data, levels, meta;
 
+// Fallback-Daten für den Fall, dass levels.json nicht geladen werden kann (z.B. offline)
+const FALLBACK_DATA = {
+  meta: {
+    title: "Sara Puzzle Quest",
+    subtitle: "Sandro & Sara — Weihnachtsedition",
+    accent: "#ff4da6",
+    defaultName: "Sara 💖"
+  },
+  levels: [
+    { id: 1, grid: 3, image: "assets/img/level_001.jpg", title: "Level 1", story: "Level 1: Ein kleiner Moment nur für dich." },
+    { id: 2, grid: 3, image: "assets/img/level_002.jpg", title: "Level 2", story: "Level 2: Weißt du noch, wie wir gelacht haben?" },
+    { id: 3, grid: 4, image: "assets/img/level_003.jpg", title: "Level 3", story: "Level 3: Du bist mein Lieblingsmensch." },
+    { id: 4, grid: 4, image: "assets/img/level_004.jpg", title: "Level 4", story: "Level 4: Das hier ist nur der Anfang 💝" },
+    { id: 5, grid: 5, image: "assets/img/level_005.jpg", title: "Level 5", story: "Level 5: Ich liebe deine Art, die Welt zu sehen." },
+    { id: 6, grid: 5, image: "assets/img/level_006.jpg", title: "Level 6", story: "Level 6: Mini-Challenge: Schnell, aber ruhig bleiben 😄" },
+    { id: 7, grid: 6, image: "assets/img/level_007.jpg", title: "Level 7", story: "Level 7: Bonus: Denk an unser nächstes Abenteuer." },
+    { id: 8, grid: 6, image: "assets/img/level_008.jpg", title: "Level 8", story: "Du hast alles gelöst. Jetzt komm zu mir — ich hab noch ein echtes Geschenk 🍌" }
+  ]
+};
+
 const el = (id) => document.getElementById(id);
 const screenHome = el("screenHome");
 const screenGame = el("screenGame");
@@ -322,8 +342,21 @@ function registerPWA() {
   }
 }
 
+async function loadData() {
+  try {
+    const res = await fetch("levels.json", { cache: "no-cache" });
+    if (!res.ok) throw new Error(`levels.json konnte nicht geladen werden: ${res.status}`);
+    return await res.json();
+  } catch (err) {
+    console.error("Konnte levels.json nicht laden, nutze Fallback-Daten", err);
+    alert("Offline? Ich nutze gespeicherte Leveldaten, damit es trotzdem klappt.");
+    // tiefe Kopie, damit wir das Original nicht mutieren
+    return JSON.parse(JSON.stringify(FALLBACK_DATA));
+  }
+}
+
 async function init() {
-  data = await fetch("levels.json").then(r => r.json());
+  data = await loadData();
   meta = data.meta;
   levels = data.levels;
 
