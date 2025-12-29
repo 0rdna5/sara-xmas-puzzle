@@ -311,9 +311,9 @@ async function startLevel(levelId) {
 }
 
 function registerPWA() {
-  // if ("serviceWorker" in navigator) {
-  //   navigator.serviceWorker.register("sw.js").catch(() => {});
-  // }
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("sw.js").catch(() => {});
+  }
 }
 
 async function init() {
