@@ -59,7 +59,13 @@ function saveHighscore(levelId, entry) {
 
 function bestScore(levelId) {
   const list = getHighscores(levelId);
-  return list[0]?.score ?? 0;
+  if (!list.length) return 0;
+  // Score-Anzeige nie negativ zeigen
+  return Math.max(list[0].score, 0);
+}
+
+function hasHighscore(levelId) {
+  return getHighscores(levelId).length > 0;
 }
 
 function fmtScore(x) { return Math.max(0, Math.round(x)).toString(); }
@@ -152,8 +158,9 @@ function posFromEvent(ev) {
 
   const pad = 8;
   const bw = board.width - pad*2;
+  const bh = board.height - pad*2;
   const tw = bw / N;
-  const th = bw / N;
+  const th = bh / N;
 
   const gx = Math.floor((x - pad) / tw);
   const gy = Math.floor((y - pad) / th);
@@ -246,13 +253,13 @@ function renderLevelCards() {
   // "Progress": höchste gelöste Level-ID (aus Highscores)
   let solved = 0;
   for (const L of levels) {
-    if (bestScore(L.id) > 0) solved = Math.max(solved, L.id);
+    if (hasHighscore(L.id)) solved = Math.max(solved, L.id);
   }
   progressPill.textContent = `${solved} / ${total}`;
 
   for (const L of levels) {
+    const solvedMark = hasHighscore(L.id) ? "✅" : "🔒";
     const best = bestScore(L.id);
-    const solvedMark = best > 0 ? "✅" : "🔒";
     const card = document.createElement("div");
     card.className = "levelCard";
     card.innerHTML = `
