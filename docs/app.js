@@ -297,13 +297,19 @@ async function startLevel(levelId) {
 
   previewImg.src = currentLevel.image;
 
-  // load image
-  await new Promise((res, rej) => {
-    img = new Image();
-    img.onload = () => res();
-    img.onerror = rej;
-    img.src = currentLevel.image;
-  });
+  // load image and guard against missing assets so the level still starts
+  try {
+    img = await new Promise((res, rej) => {
+      const picture = new Image();
+      picture.onload = () => res(picture);
+      picture.onerror = () => rej(new Error(`Bild nicht gefunden: ${currentLevel.image}`));
+      picture.src = currentLevel.image;
+    });
+  } catch (err) {
+    console.error(err);
+    alert("Bild konnte nicht geladen werden. Bitte versuch es später erneut.");
+    return;
+  }
 
   buildTiles();
   show(screenGame);
@@ -311,9 +317,9 @@ async function startLevel(levelId) {
 }
 
 function registerPWA() {
-  // if ("serviceWorker" in navigator) {
-  //   navigator.serviceWorker.register("sw.js").catch(() => {});
-  // }
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("sw.js").catch(() => {});
+  }
 }
 
 async function init() {
